@@ -1,0 +1,288 @@
+{{define "title"}}About{{end}}
+{{define "head"}}{{end}}
+{{define "content"}}
+	<button id="encode" onclick="encode()">ENCODE</button>
+<div>
+  <p>Taken from wikpedia</p>
+  <img id="image" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA
+    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO
+        9TXL0Y4OHwAAAABJRU5ErkJggg==" alt="Red dot" />
+</div>
+    <h1>The video element</h1>
+		<!-- <button onclick="frame()">A</button> -->
+<input id="inputforvideo" type="file" accept="video/*" onchange="fileselected()"/>
+    <video width="320" height="240" id="video" controls>
+    </video>
+	<button id="frames">start</button>
+<select disabled id="select">
+</select>
+<canvas width="320" height="240" id="canvas">
+</canvas>
+<canvas width="320" height="240" id="canvas1">
+</canvas>
+<canvas width="320" height="240" id="canvas2">
+</canvas>
+<canvas width="320" height="240" id="canvas3">
+</canvas>
+<canvas width="320" height="240" id="canvas4">
+</canvas>
+<canvas width="320" height="240" id="canvas5">
+</canvas>
+<canvas width="320" height="240" id="canvas6">
+</canvas>
+<canvas width="320" height="240" id="canvas7">
+</canvas>
+<canvas width="320" height="240" id="canvas8">
+</canvas>
+<canvas width="320" height="240" id="canvas9">
+</canvas>
+<canvas width="320" height="240" id="canvas10">
+</canvas>
+    <div id="output">
+        Current Stat
+    </div>
+    <div id="counter">
+
+    </div>
+
+
+    <form id="form" method="post">
+		<input type="hidden" name="frameData" id="frameData" >
+		<input type="hidden" name="token" value="{{.token}}">
+	</form>
+    <script>
+    var videoElem = document.getElementById("video");
+    var counterElem = document.getElementById("counter");
+    var outputElem = document.getElementById("output");
+	var fileUrl = "";
+
+const frames = [];
+const button = document.getElementById("frames");
+const select = document.getElementById("select");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+    // Playing event
+    var isStalled = function (e) { outputElem.innerText = "stalled"; };
+    var isWaiting = function (e) { outputElem.innerText = "waiting for content"; };
+    var isPlaying = function (e) { outputElem.innerText = "playing"; };
+
+    // Pause event
+    var onPause = function (e) { outputElem.innerText = "pause"; select.disabled = false; };
+
+    // Volume changed event
+    // var onVolumechange = function (e) { outputElem.innerText = "Volumechange event triggered"; };
+
+    videoElem.addEventListener("playing", isPlaying, false);
+    videoElem.addEventListener("stalled", isStalled, false);
+    videoElem.addEventListener("waiting", isWaiting, false);
+    videoElem.addEventListener("pause", onPause, false);
+    // videoElem.addEventListener("volumechange", onVolumechange, false);
+
+    const checkExist = setInterval(() => {
+        // if (typeof window.hlsArrayLevels !== 'undefined') {
+            // clearInterval(checkExist);
+        var quality = videoElem.getVideoPlaybackQuality();
+        var stats = "Stats : \n";
+        var ct = videoElem.currentTime;
+        var dur = videoElem.duration;
+        var videoProgressPos = ct / dur;
+        stats += "video Progress Pos : " + videoProgressPos + "\n";
+        stats += "Total Video Frames : "+ quality.totalVideoFrames +"\n";
+        stats += "corruptedVideoFrames " + quality.corruptedVideoFrames + "\n";
+        stats += "droppedVideoFrames " + quality.droppedVideoFrames + "\n";        
+        stats += "Current Time : " + ct + "\n";
+        stats += "Duration : " + dur + "\n";
+        // stats += "totalFrameDelay " + quality.totalFrameDelay + "\n"
+        // stats += " " + quality. + "\n"
+        // stats += " " + quality. + "\n"
+        // stats += " " + quality. + "\n"
+
+        counterElem.innerText = stats;
+    }, 10);
+
+	function fileselected(){
+		var fileInput = document.getElementById('inputforvideo');
+		fileUrl = window.URL.createObjectURL(fileInput.files[0]);
+		console.log(fileUrl);
+		$("#video").attr("src", fileUrl);
+	}
+
+
+	function frame(){
+	// var varName = function(){
+		// console.log('aaa');
+
+		// $.ajax({
+		// 	url: "{{.BaseURI}}video&!"+fileUrl.split("http://localhost:8080/")[1]+"&!10",
+		// 	method: "GET",
+		// 	dataType: "html",
+		// 	data: {},
+		// 	success: function(data,status) {
+		// 		console.log("in success....");
+		// 		console.log(data);
+		// 	}
+		// });
+	// }
+}
+
+
+function decode(){
+	const decoder = new VideoDecoder({
+  output: onFrame, // the callback to handle all the VideoFrame objects
+  error: e => console.error(e),
+});
+decoder.configure(config); // depends on the input file, your demuxer should provide it
+demuxer.start((chunk) => { // depends on the demuxer, but you need it to return chunks of video data
+  decoder.decode(chunk); // will trigger our onFrame callback  
+})
+}
+
+
+
+button.onclick = async(evt) => {
+  if (HTMLVideoElement.prototype.requestVideoFrameCallback) {
+    let stopped = false;
+    const video = await getVideoElement();
+    const drawingLoop = async(timestamp, frame) => {
+      const bitmap = await createImageBitmap(video);
+      const index = frames.length;
+      frames.push(bitmap);
+      document.getElementById("canvas").getContext("2d").drawImage(frames[index <= 0 ? 0 : index], 0, 0, 320, (frame.height * 320)/frame.width);
+      document.getElementById("canvas1").getContext("2d").drawImage(frames[index-1 <= 0 ? 0 : index-1], 0, 0, 320, (frame.height * 320)/frame.width);
+      document.getElementById("canvas2").getContext("2d").drawImage(frames[index-2 <= 0 ? 0 : index-2], 0, 0, 320, (frame.height * 320)/frame.width);
+      document.getElementById("canvas3").getContext("2d").drawImage(frames[index-3 <= 0 ? 0 : index-3], 0, 0, 320, (frame.height * 320)/frame.width);
+      document.getElementById("canvas4").getContext("2d").drawImage(frames[index-4 <= 0 ? 0 : index-4], 0, 0, 320, (frame.height * 320)/frame.width);
+      document.getElementById("canvas5").getContext("2d").drawImage(frames[index-5 <= 0 ? 0 : index-5], 0, 0, 320, (frame.height * 320)/frame.width);
+      document.getElementById("canvas6").getContext("2d").drawImage(frames[index-6 <= 0 ? 0 : index-6], 0, 0, 320, (frame.height * 320)/frame.width);
+      document.getElementById("canvas7").getContext("2d").drawImage(frames[index-7 <= 0 ? 0 : index-7], 0, 0, 320, (frame.height * 320)/frame.width);
+      document.getElementById("canvas8").getContext("2d").drawImage(frames[index-8 <= 0 ? 0 : index-8], 0, 0, 320, (frame.height * 320)/frame.width);
+      document.getElementById("canvas9").getContext("2d").drawImage(frames[index-9 <= 0 ? 0 : index-9], 0, 0, 320, (frame.height * 320)/frame.width);
+      document.getElementById("canvas10").getContext("2d").drawImage(frames[index-10 <= 0 ? 0 : index-10], 0, 0, 320, (frame.height * 320)/frame.width);
+      select.append(new Option("Frame #" + (index + 1), index));
+      if (!video.ended && !stopped && !video.isPlaying) {
+        video.requestVideoFrameCallback(drawingLoop);
+        select.disabled = true;
+      } else {
+        select.disabled = false;
+      }
+    };
+    video.requestVideoFrameCallback(drawingLoop);
+    button.onclick = (evt) => stopped = true;
+    button.textContent = "stop";
+  } else {
+    console.error("your browser doesn't support this API yet");
+  }
+};
+
+select.onchange = (evt) => {
+  const frame = frames[select.value];
+//   canvas.width = frame.width;
+//   canvas.height = frame.height;
+  ctx.drawImage(frame, 0, 0, 320, (frame.height * 320)/frame.width);
+	// resizeCanvas();
+
+//   canvas.width = 320;
+//   canvas.height = 240;
+
+};
+
+async function getVideoElement() {
+  const video = document.getElementById("video");
+//   video.crossOrigin = "anonymous";
+//   video.src = "https://upload.wikimedia.org/wikipedia/commons/a/a4/BBH_gravitational_lensing_of_gw150914.webm";
+//   document.body.append(video);
+  await video.play();
+  return video;
+}
+
+
+// // Display custom canvas. In this case it's a blue, 5 pixel 
+// // border that resizes along with the browser window.
+// function redraw() {
+// 	context.strokeStyle = 'blue';
+// 	context.lineWidth = '5';
+// 	context.strokeRect(0, 0, 360, 240);
+// }
+
+// // Runs each time the DOM window resize event fires.
+// // Resets the canvas dimensions to match window,
+// // then draws the new borders accordingly.
+// function resizeCanvas() {
+// 	canvas.width = 360;
+// 	canvas.height = 240;
+// 	redraw();
+// }
+
+function encode(){
+ 
+    // Get base64 data to send to server for upload  
+        var imagebase64data = canvas.toDataURL("image/png");  
+        console.log(imagebase64data);
+        document.getElementById("image").src = imagebase64data;
+
+        imagebase64data = imagebase64data.replace('data:image/png;base64,', '');  
+        $.ajax({  
+            type: 'POST',  
+            url: '{{.BaseURI}}encodex264',
+            data: "category\="+imagebase64data+"'",  
+            dataType: 'text',  
+            success: function (out) {  
+                console.log(out);
+                alert('Image uploaded successfully..');  
+                document.getElementById("image").src = "data:image/png;base64,"+out;
+                if(out === imagebase64data){
+                  alert('ues');
+                }
+            }  
+        });  
+  // $.ajax({
+  //       url: "{{.BaseURI}}encodex264",
+  //       type: 'POST',
+  //       data: {
+  //           email: 'email@example.com',
+  //           message: 'hello world!',
+  //           frame: frames[select.value]
+
+  //       },
+  //       success: function(msg) {
+  //           alert('Email Sent');
+  //       }               
+  //   });
+
+//   document.getElementById("frameData").value = frames[select.value];
+// 	var formData = {form:document.getElementById("form")};//{frame:frames[select.value]};//{name:"ravi",age:"31"};//{name:frames[select.value]}; //Array 
+//   console.log("formData");
+//   console.log(formData);
+// $.ajax({
+// 		url: "{{.BaseURI}}encodex264",
+//     method: "POST",
+//     data : formData,
+//     success: function(data, textStatus, jqXHR)
+//     {
+//          console.log(data);
+//          console.log(jqXHR);
+//          console.log(textStatus);
+//         //data - response from server
+//     },
+//     error: function (jqXHR, textStatus, errorThrown)
+//     {
+//          console.log(errorThrown);
+//          console.log(jqXHR);
+//          console.log(textStatus);
+
+//     }
+// });
+
+//request with URL,data,success callback
+// $.post("{{.BaseURI}}encodex264",
+//     {name:"ravi",age:"31"},
+//     function(data, textStatus, jqXHR)
+//     {
+//           //data: Received from server
+//     });
+}
+
+</script>
+{{end}}
+{{define "foot"}}{{end}}
